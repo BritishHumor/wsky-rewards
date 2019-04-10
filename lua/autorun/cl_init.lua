@@ -45,10 +45,10 @@ function wskyTimer( ply, previousTeam, newTeam)
             if (seconds >= 60) then
                 minutes = minutes + 1
                 seconds = 0
-                if (minutes >= 60) then
-                    hours = hours + 1
-                    minutes = 0
-                end
+            end
+            if (minutes >= 60) then
+                hours = hours + 1
+                minutes = 0
             end
             print(getHours() .. ":" .. getMinutes() .. ":" .. getSeconds())
         end)
@@ -71,10 +71,18 @@ function addTimeCommand( ply, command, teamChat, isDead)
             timeToAdd = commandExplode[2]:sub(1, commandExplode[2]:len() -1)
             if (measurement == "s") then
                 seconds = seconds + timeToAdd
+                if (seconds >= 60) then
+                    minutes = minutes + 1
+                    seconds = 0
+                end
                 ply:PrintMessage( HUD_PRINTTALK, "[Wsky Rewards] Added " .. timeToAdd .. " seconds.")
                 return true    
             elseif (measurement == "m") then
                 minutes = minutes + timeToAdd
+                if (minutes >= 60) then
+                    hours = hours + 1
+                    minutes = 0
+                end
                 ply:PrintMessage( HUD_PRINTTALK, "[Wsky Rewards] Added " .. timeToAdd .. " minutes.")
                 return true    
             elseif (measurement == "h") then
