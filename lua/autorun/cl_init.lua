@@ -1,22 +1,22 @@
 local gm = gmod.GetGamemode()['FolderName']
 
 local seconds = 0
-local minutes = 0
-local hours = 0
 
 function drawHud()
     draw.DrawText(getHours() .. ":" .. getMinutes() .. ":" .. getSeconds(), "DermaDefault", 10, 10, Color(255,255,255,255), TEXT_ALIGN_LEFT)
 end
 
 function getSeconds()
-    if (seconds < 10) then
-        return "0" .. seconds
+    local clampSeconds = seconds % 60
+    if (clampSeconds < 10) then
+        return "0" .. clampSeconds
     else
-        return seconds
+        return clampSeconds
     end
 end
 
 function getMinutes()
+    local minutes = math.floor( (seconds / 60) % 60 )
     if (minutes < 10) then
         return "0" .. minutes
     else
@@ -25,6 +25,7 @@ function getMinutes()
 end
 
 function getHours()
+    local hours = math.floor( seconds / 60 / 60 )
     if (hours < 10) then
         return "0" .. hours
     else
@@ -42,15 +43,6 @@ function wskyTimer( ply, previousTeam, newTeam)
         print("Player is staff, starting timer")
         timer.Create("jobTimer", 1, 0, function()
             seconds = seconds + 1
-            if (seconds >= 60) then
-                minutes = minutes + 1
-                seconds = 0
-            end
-            if (minutes >= 60) then
-                hours = hours + 1
-                minutes = 0
-            end
-            print(getHours() .. ":" .. getMinutes() .. ":" .. getSeconds())
         end)
     else
         print("Player is no longer staff, checking if timer exists")
@@ -71,22 +63,14 @@ function addTimeCommand( ply, command, teamChat, isDead)
             timeToAdd = commandExplode[2]:sub(1, commandExplode[2]:len() -1)
             if (measurement == "s") then
                 seconds = seconds + timeToAdd
-                if (seconds >= 60) then
-                    minutes = minutes + 1
-                    seconds = 0
-                end
                 ply:PrintMessage( HUD_PRINTTALK, "[Wsky Rewards] Added " .. timeToAdd .. " seconds.")
                 return true    
             elseif (measurement == "m") then
-                minutes = minutes + timeToAdd
-                if (minutes >= 60) then
-                    hours = hours + 1
-                    minutes = 0
-                end
+                seconds = seconds + (timeToAdd * 60)
                 ply:PrintMessage( HUD_PRINTTALK, "[Wsky Rewards] Added " .. timeToAdd .. " minutes.")
                 return true    
             elseif (measurement == "h") then
-                hours = hours + timeToAdd
+                seconds = seconds + (timeToAdd * 60 * 60)
                 ply:PrintMessage( HUD_PRINTTALK, "[Wsky Rewards] Added " .. timeToAdd .. " hours.")
                 return true    
             end
@@ -102,6 +86,9 @@ function addTimeCommand( ply, command, teamChat, isDead)
 end
 
 if (gm == 'darkrp') then
+    if (timer.Exists("jobTimer")) then
+        timer.Remove("jobTimer")
+    end
     hook.Add("OnPlayerChangedTeam", "wskyTimer", wskyTimer)
 
     hook.Add("OnPlayerChat", "AddTimeCommand", addTimeCommand)
