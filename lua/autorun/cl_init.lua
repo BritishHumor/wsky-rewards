@@ -108,7 +108,6 @@ function addTimeCommand( ply, command, teamChat, isDead)
                 ply:PrintMessage( HUD_PRINTTALK, "[Wsky Rewards] Error occured: unknown time measurement of '" .. measurement .. "', make sure you end your time with s, m or h.")
                 return true    
         else
-            print("No Time set.")
             ply:PrintMessage( HUD_PRINTTALK, "[Wsky Rewards] Invalid Parameter: No time set.")
             return true
         end
