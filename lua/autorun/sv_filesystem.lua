@@ -3,11 +3,11 @@ if SERVER then
     util.AddNetworkString( "wskyReadPlayerData" )
     util.AddNetworkString( "wskySavePlayerData" )
     
-    local filePath = "wsky-rewards/playerJobTimes/"
+    local filePath = "wsky-rewards/player-job-times/"
     
     net.Receive("wskyReadPlayerData", function (len, ply)
         local steamId = ply:SteamID64()
-        local tableString = file.Read( filePath .. steamId .. "-jobTimes.txt", "DATA" )
+        local tableString = file.Read( filePath .. steamId .. "-job-times.txt", "DATA" )
         if (tableString) then
             local output = util.JSONToTable(tableString)
             net.Start("wskyReturnPlayerData")
@@ -22,7 +22,7 @@ if SERVER then
     net.Receive("wskySavePlayerData", function (len, ply)
         local steamId = ply:SteamID64()
         local jobsTimerTable = net.ReadTable()
-        local fileName = steamId .. "-jobTimes.txt"
+        local fileName = steamId .. "-job-times.txt"
         file.Write(filePath .. fileName, util.TableToJSON(jobsTimerTable))
     end)
 end
